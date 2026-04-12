@@ -1,77 +1,62 @@
 using UnityEngine;
 using TMPro;
+
 public class player : MonoBehaviour
 {
     public KeyCode moveLeft = KeyCode.A;
     public KeyCode moveRight = KeyCode.D;
     public KeyCode shootKey = KeyCode.Space;
 
-    public float velocidade = 10f;
+    public float velocidade = 8f;
     
-    // Prefab do raio
     public GameObject raioPrefab;
-    
-    // Ponto de onde o raio sai
     public Transform pontoDisparo;
     
-    // Paredes
     public Transform leftWall;
     public Transform rightWall;
     
-    // Referência para o chão (opcional)
-    public Transform groundCheck;
-    public LayerMask groundLayer;
-    
     private Rigidbody2D rb;
-    private bool isGrounded;
+    private float movimentoInput = 0f;
+    private bool facingRight = true;
     
     void Start()
     {
-        // Pega o componente Rigidbody2D (recomendado para movimento)
         rb = GetComponent<Rigidbody2D>();
         
-        // Se não tiver Rigidbody2D, adiciona um
         if (rb == null)
         {
             rb = gameObject.AddComponent<Rigidbody2D>();
-            rb.gravityScale = 3f; // Gravidade
-            rb.constraints = RigidbodyConstraints2D.FreezeRotation; // Congela rotação
         }
         
-        // Se não tiver um groundCheck, cria um automaticamente
-        if (groundCheck == null)
+        // CONFIGURAÇÕES CRÍTICAS
+        rb.gravityScale = 2f;
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+        rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+        rb.interpolation = RigidbodyInterpolation2D.Interpolate;
+        rb.mass = 1f;
+        rb.linearDamping = 0f;
+        
+        // Ajusta o collider do player
+        BoxCollider2D boxCol = GetComponent<BoxCollider2D>();
+        if (boxCol != null)
         {
-            GameObject groundObj = new GameObject("GroundCheck");
-            groundObj.transform.parent = transform;
-            groundObj.transform.localPosition = new Vector3(0, -0.5f, 0);
-            groundCheck = groundObj.transform;
+            boxCol.edgeRadius = 0.1f; // Bordas arredondadas ajudam a subir rampas
         }
     }
     
     void Update()
     {
-        // Movimento horizontal (apenas A e D)
-        float movimento = 0f;
+        // Input
+        movimentoInput = 0f;
+        if (Input.GetKey(moveLeft)) movimentoInput = -1f;
+        if (Input.GetKey(moveRight)) movimentoInput = 1f;
         
-        if (Input.GetKey(moveLeft))
-            movimento = -1f;
-        
-        if (Input.GetKey(moveRight))
-            movimento = 1f;
-        
-        // Move o jogador horizontalmente
-        Vector3 deslocamento = Vector3.right * movimento * velocidade * Time.deltaTime;
-        transform.Translate(deslocamento);
-        
-        // Verifica se está no chão (opcional)
-        VerificarChao();
-        
-        // Limites das paredes (apenas horizontal agora)
+        // Limites
         if (leftWall != null && rightWall != null)
         {
-            Vector3 posicaoAtual = transform.position;
-            posicaoAtual.x = Mathf.Clamp(posicaoAtual.x, leftWall.position.x, rightWall.position.x);
-            transform.position = posicaoAtual;
+            Vector3 pos = transform.position;
+            pos.x = Mathf.Clamp(pos.x, leftWall.position.x, rightWall.position.x);
+            transform.position = pos;
         }
         
         // Atirar
@@ -81,17 +66,15 @@ public class player : MonoBehaviour
         }
     }
     
-    void VerificarChao()
+    void FixedUpdate()
     {
-        // Verifica se está tocando o chão (se tiver groundLayer configurado)
-        if (groundLayer != 0)
-        {
-            isGrounded = Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
-            
-            // Opcional: se quiser que o player só ande quando está no chão
-            // Você pode descomentar a linha abaixo
-            // if (!isGrounded) return;
-        }
+        // MOVIMENTO QUE FUNCIONA EM RAMPAS
+        // Método 1: Velocity (mais direto)
+        Vector2 targetVelocity = new Vector2(movimentoInput * velocidade, rb.linearVelocity.y);
+        rb.linearVelocity = targetVelocity;
+        
+        // Método 2: Se não funcionar, descomente a linha abaixo e comente a de cima
+        // rb.AddForce(new Vector2(movimentoInput * velocidade * 10f, 0), ForceMode2D.Force);
     }
     
     void Atirar()
@@ -101,17 +84,4 @@ public class player : MonoBehaviour
             Instantiate(raioPrefab, pontoDisparo.position, Quaternion.identity);
         }
     }
-
-    
-    // Desenha o groundCheck no editor (opcional)
-    void OnDrawGizmosSelected()
-    {
-        if (groundCheck != null)
-        {
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(groundCheck.position, 0.2f);
-        }
-    }
-
-
 }

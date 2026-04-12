@@ -7,11 +7,12 @@ TagManager:
   - Apple
   - Raio
   - Wall
+  - Inimigo
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Ground
   - Water
   - UI
   - 
