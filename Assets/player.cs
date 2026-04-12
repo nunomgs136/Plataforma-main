@@ -1,5 +1,5 @@
 using UnityEngine;
-
+using TMPro;
 public class player : MonoBehaviour
 {
     public KeyCode moveLeft = KeyCode.A;
@@ -101,6 +101,7 @@ public class player : MonoBehaviour
             Instantiate(raioPrefab, pontoDisparo.position, Quaternion.identity);
         }
     }
+
     
     // Desenha o groundCheck no editor (opcional)
     void OnDrawGizmosSelected()
@@ -111,4 +112,6 @@ public class player : MonoBehaviour
             Gizmos.DrawWireSphere(groundCheck.position, 0.2f);
         }
     }
+
+
 }
