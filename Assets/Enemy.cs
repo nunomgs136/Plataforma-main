@@ -2,9 +2,17 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    public float velocidade = -5f;
+    //public float velocidade = -5f;
     public GameObject raioPrefab;
     public float tempoTiro = 2f;
+    [Header("Movimento")]
+    public float velocidade = -2f;          // Velocidade de subida
+    public Vector2 direcao = new Vector2(1f, 0.5f); // Direção inclinada (ex: sobe e vai pra direita)
+
+    [Header("Limites (opcional)")]
+    public bool destruirAoUltrapassar = true;
+    public float limiteY = 8f;             // Altura máxima (para parar/destruir)
+    public float limiteX = 12f;            // Limite horizontal
     
     void Start()
     {

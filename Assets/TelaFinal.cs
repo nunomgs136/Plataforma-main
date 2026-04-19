@@ -44,6 +44,7 @@ public void ReiniciarJogo()
     // Reseta os valores antes de trocar de cena
     GameManager.instance.pontos = 0;
     GameManager.instance.vidas = 5;
+    GameManager.instance.appleCount = 0;
     GameManager.instance.venceu = false;
 
     SceneManager.LoadScene("fase1");
