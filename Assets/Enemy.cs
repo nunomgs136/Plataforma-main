@@ -54,7 +54,8 @@ public class Enemy : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             Debug.Log("Inimigo encostou no player!");
-            Destroy(gameObject);
+            GameManager.instance.PlayerAtingido();
+            
         }
     }
 }

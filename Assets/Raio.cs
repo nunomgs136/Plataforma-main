@@ -5,7 +5,7 @@ public class Raio : MonoBehaviour
     public float velocidade = 15f;
     public Vector3 direcao = Vector3.right;
     public bool tiroInimigo = false;
-
+    
     void Update()
     {
         transform.Translate(direcao * velocidade * Time.deltaTime);
@@ -34,7 +34,7 @@ public class Raio : MonoBehaviour
             return;
         }
 
-         if (tiroInimigo && col.CompareTag("Player"))
+    if (tiroInimigo && col.CompareTag("Player"))
     {
         GameManager.instance.PlayerAtingido();
         Destroy(gameObject);

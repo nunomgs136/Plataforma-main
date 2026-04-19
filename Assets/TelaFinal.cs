@@ -18,17 +18,17 @@ public class TelaFinal : MonoBehaviour
             Debug.Log("✅ Texto conectado: " + mensagem.name);
         }
 
-        if (gameManager.instance == null)
+        if (GameManager.instance == null)
         {
             Debug.LogError("❌ GameManager.instance é nulo! Ele pode ter sido destruído.");
             return;
         }
         else
         {
-            Debug.Log("✅ GameManager encontrado. venceu = " + gameManager.instance.venceu);
+            Debug.Log("✅ GameManager encontrado. venceu = " + GameManager.instance.venceu);
         }
 
-        if (gameManager.instance.venceu)
+        if (GameManager.instance.venceu)
         {
             mensagem.text = "VOCÊ VENCEU!";
             mensagem.color = Color.green;
@@ -42,9 +42,9 @@ public class TelaFinal : MonoBehaviour
 public void ReiniciarJogo()
 {
     // Reseta os valores antes de trocar de cena
-    gameManager.instance.pontos = 0;
-    gameManager.instance.vidas = 5;
-    gameManager.instance.venceu = false;
+    GameManager.instance.pontos = 0;
+    GameManager.instance.vidas = 5;
+    GameManager.instance.venceu = false;
 
     SceneManager.LoadScene("fase1");
 }

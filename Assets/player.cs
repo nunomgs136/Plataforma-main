@@ -6,8 +6,10 @@ public class player : MonoBehaviour
     public KeyCode moveLeft = KeyCode.A;
     public KeyCode moveRight = KeyCode.D;
     public KeyCode shootKey = KeyCode.Space;
+    public KeyCode jumpKey = KeyCode.L; // Tecla L para pular
 
     public float velocidade = 8f;
+    public float forcaPulo = 10f; // Força do pulo
     
     public GameObject raioPrefab;
     public Transform pontoDisparo;
@@ -18,6 +20,7 @@ public class player : MonoBehaviour
     private Rigidbody2D rb;
     private float movimentoInput = 0f;
     private bool facingRight = true;
+    private bool estaNoChao = false;
     
     void Start()
     {
@@ -40,7 +43,7 @@ public class player : MonoBehaviour
         BoxCollider2D boxCol = GetComponent<BoxCollider2D>();
         if (boxCol != null)
         {
-            boxCol.edgeRadius = 0.1f; // Bordas arredondadas ajudam a subir rampas
+            boxCol.edgeRadius = 0.1f;
         }
     }
     
@@ -50,6 +53,16 @@ public class player : MonoBehaviour
         movimentoInput = 0f;
         if (Input.GetKey(moveLeft)) movimentoInput = -1f;
         if (Input.GetKey(moveRight)) movimentoInput = 1f;
+        
+        // PULO - Tecla L
+        if (Input.GetKeyDown(jumpKey) && estaNoChao)
+        {
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, forcaPulo);
+        }
+        
+        // Verificar se está no chão (usando Raycast simples)
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 1.1f);
+        estaNoChao = hit.collider != null;
         
         // Limites
         if (leftWall != null && rightWall != null)
@@ -69,12 +82,8 @@ public class player : MonoBehaviour
     void FixedUpdate()
     {
         // MOVIMENTO QUE FUNCIONA EM RAMPAS
-        // Método 1: Velocity (mais direto)
         Vector2 targetVelocity = new Vector2(movimentoInput * velocidade, rb.linearVelocity.y);
         rb.linearVelocity = targetVelocity;
-        
-        // Método 2: Se não funcionar, descomente a linha abaixo e comente a de cima
-        // rb.AddForce(new Vector2(movimentoInput * velocidade * 10f, 0), ForceMode2D.Force);
     }
     
     void Atirar()
